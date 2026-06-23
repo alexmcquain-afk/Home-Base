@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#1e3a5f">
+<title>Home Base</title>
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='40' fill='%232c5282'/%3E%3Cpath d='M90 38L42 78v64h32v-40h32v40h32V78z' fill='white'/%3E%3C/svg%3E">
+<style>
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  body { margin: 0; background: #f8fafc; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; color: #1e293b; }
+  #app { max-width: 480px; margin: 0 auto; min-height: 100vh; background: #f8fafc; padding-bottom: 48px; }
+  .header { padding: max(24px, env(safe-area-inset-top)) 20px 16px; background: linear-gradient(135deg, #1e3a5f 0%, #2c5282 100%); color: #fff; }
+  .header h1 { margin: 0; font-size: 24px; font-weight: 700; letter-spacing: -0.5px; }
+  .header p { margin: 4px 0 0; font-size: 13px; opacity: 0.85; }
+  .tabbar { display: flex; background: #fff; border-bottom: 1px solid #e2e8f0; position: sticky; top: 0; z-index: 10; }
+  .tab { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 12px 0; background: none; border: none; color: #94a3b8; cursor: pointer; border-bottom: 3px solid transparent; font-size: 13px; font-weight: 600; font-family: inherit; }
+  .tab.active { color: #2c5282; border-bottom: 3px solid #2c5282; }
+  .tab svg { width: 18px; height: 18px; }
+  .content { padding: 16px; }
+  .progress-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .muted { font-size: 13px; color: #64748b; }
+  .track { height: 8px; background: #e2e8f0; border-radius: 4px; overflow: hidden; }
+  .fill { height: 100%; background: #22c55e; transition: width .3s; }
+  .reset-wrap { position: relative; }
+  .reset-btn { display: flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 600; color: #2c5282; background: #e0e7ff; border: none; border-radius: 8px; padding: 6px 10px; cursor: pointer; font-family: inherit; }
+  .reset-menu { position: absolute; right: 0; top: calc(100% + 6px); background: #fff; border-radius: 10px; box-shadow: 0 4px 16px rgba(0,0,0,.12); border: 1px solid #e2e8f0; overflow: hidden; z-index: 20; min-width: 180px; }
+  .reset-item { display: block; width: 100%; text-align: left; background: none; border: none; border-bottom: 1px solid #f1f5f9; padding: 11px 14px; font-size: 14px; color: #334155; cursor: pointer; font-family: inherit; }
+  .reset-item:active { background: #f1f5f9; }
+  .chore-row { display: flex; align-items: center; gap: 12px; background: #fff; border-radius: 12px; padding: 12px 14px; margin-bottom: 8px; box-shadow: 0 1px 2px rgba(0,0,0,.04); }
+  .check-btn { background: none; border: none; padding: 0; cursor: pointer; display: flex; }
+  .chore-name { font-size: 15px; font-weight: 500; }
+  .chore-name.done { color: #94a3b8; text-decoration: line-through; }
+  .freq-tag { display: inline-block; margin-top: 4px; font-size: 11px; font-weight: 600; color: #64748b; background: #f1f5f9; border-radius: 6px; padding: 2px 8px; }
+  .icon-btn { background: none; border: none; cursor: pointer; padding: 4px; display: flex; }
+  .card { background: #fff; border-radius: 12px; margin-bottom: 10px; box-shadow: 0 1px 2px rgba(0,0,0,.04); overflow: hidden; }
+  .card-head { display: flex; align-items: center; gap: 8px; padding: 14px; cursor: pointer; }
+  .card-title { flex: 1; font-size: 15px; font-weight: 600; }
+  .status-pill { font-size: 11px; font-weight: 700; color: #fff; border-radius: 12px; padding: 3px 10px; white-space: nowrap; }
+  .card-body { padding: 12px 14px 14px; border-top: 1px solid #f1f5f9; }
+  .label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; color: #94a3b8; margin-bottom: 4px; }
+  .body-text { font-size: 14px; color: #475569; margin-bottom: 12px; white-space: pre-wrap; }
+  .card-actions { display: flex; gap: 8px; }
+  .add-card { background: #fff; border-radius: 12px; padding: 14px; margin-top: 8px; box-shadow: 0 1px 2px rgba(0,0,0,.04); }
+  .add-actions { display: flex; gap: 8px; margin-top: 10px; }
+  input, select, textarea { width: 100%; padding: 10px 12px; font-size: 15px; border: 1px solid #e2e8f0; border-radius: 8px; margin-bottom: 8px; outline: none; font-family: inherit; background: #fff; }
+  textarea { font-size: 14px; min-height: 60px; resize: vertical; }
+  .btn-primary { background: #2c5282; color: #fff; border: none; border-radius: 8px; padding: 9px 16px; font-size: 14px; font-weight: 600; cursor: pointer; font-family: inherit; }
+  .btn-ghost { display: flex; align-items: center; gap: 5px; background: #f1f5f9; color: #475569; border: none; border-radius: 8px; padding: 9px 14px; font-size: 14px; font-weight: 600; cursor: pointer; font-family: inherit; }
+  .btn-danger { display: flex; align-items: center; gap: 5px; background: #fef2f2; color: #ef4444; border: none; border-radius: 8px; padding: 9px 14px; font-size: 14px; font-weight: 600; cursor: pointer; font-family: inherit; }
+  .add-trigger { display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%; background: #fff; color: #2c5282; border: 2px dashed #cbd5e1; border-radius: 12px; padding: 12px; font-size: 14px; font-weight: 600; cursor: pointer; margin-top: 8px; font-family: inherit; }
+  .section-head { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .6px; color: #2c5282; margin: 0 0 8px 2px; }
+  svg.ic { width: 16px; height: 16px; }
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<script>
+// ── Icons (inline SVG) ──────────────────────────────────────
+const I = {
+  home: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>',
+  list: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="6" height="6" rx="1"/><path d="M3 17l2 2 4-4"/><line x1="13" y1="6" x2="21" y2="6"/><line x1="13" y1="12" x2="21" y2="12"/><line x1="13" y1="18" x2="21" y2="18"/></svg>',
+  target: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>',
+  circle: '<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" stroke-width="2" style="width:24px;height:24px"><circle cx="12" cy="12" r="10"/></svg>',
+  check: '<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2" style="width:24px;height:24px"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>',
+  trash: '<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>',
+  trashRed: '<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>',
+  plus: '<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="width:18px;height:18px"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>',
+  reset: '<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>',
+  pencil: '<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>',
+  down: '<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px"><polyline points="6 9 12 15 18 9"/></svg>',
+  right: '<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px"><polyline points="9 18 15 12 9 6"/></svg>',
+};
+
+// ── Data ────────────────────────────────────────────────────
+const KEY = "home-base-v1";
+const FREQS = ["Daily", "Weekly", "Biweekly", "Monthly", "Seasonal"];
+const STATUSES = ["Not started", "Planning", "Diagnosing", "In progress", "Blocked", "Done"];
+const STATUS_COLOR = { "Not started":"#9ca3af","Planning":"#6366f1","Diagnosing":"#f59e0b","In progress":"#0ea5e9","Blocked":"#ef4444","Done":"#22c55e" };
+const FREQ_ORDER = { Daily:0, Weekly:1, Biweekly:2, Monthly:3, Seasonal:4 };
+const uid = () => Math.random().toString(36).slice(2,9);
+
+const DEFAULT = {
+  chores: [
+    { id:"c1", name:"Take out trash", freq:"Weekly", done:false },
+    { id:"c2", name:"Vacuum main floor", freq:"Weekly", done:false },
+    { id:"c3", name:"Wipe kitchen counters", freq:"Daily", done:false },
+    { id:"c4", name:"Mow lawn", freq:"Biweekly", done:false },
+    { id:"c5", name:"Clean bathrooms", freq:"Weekly", done:false },
+    { id:"c6", name:"Check home humidity (hygrometer)", freq:"Weekly", done:false },
+    { id:"c7", name:"Laundry", freq:"Weekly", done:false },
+  ],
+  projects: [
+    { id:"p3", name:"Driveway stone edging", status:"Not started", nextStep:"Buy polymeric sand + gravel base", open:true },
+  ],
+  goals: [
+    { id:"g1", name:"Labor Day fitness peak", detail:"Hybrid strength + running program", open:true },
+    { id:"g2", name:"RI mortgage payoff", detail:"Target full payoff ~June 2027", open:false },
+  ],
+};
+
+let data, tab = "chores", resetMenu = false, adding = false, editId = null;
+let draft = {};
+
+function load() {
+  try { const raw = localStorage.getItem(KEY); data = raw ? JSON.parse(raw) : structuredClone(DEFAULT); }
+  catch { data = structuredClone(DEFAULT); }
+}
+function save() { try { localStorage.setItem(KEY, JSON.stringify(data)); } catch(e){ console.error(e); } }
+function esc(s){ return (s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
+
+// ── Render ──────────────────────────────────────────────────
+function render() {
+  const app = document.getElementById("app");
+  app.innerHTML = `
+    <div class="header"><h1>Home Base</h1><p>Chores · Projects · Goals</p></div>
+    <div class="tabbar">
+      <button class="tab ${tab==='chores'?'active':''}" data-tab="chores">${I.home}Chores</button>
+      <button class="tab ${tab==='projects'?'active':''}" data-tab="projects">${I.list}Projects</button>
+      <button class="tab ${tab==='goals'?'active':''}" data-tab="goals">${I.target}Goals</button>
+    </div>
+    <div class="content">${tab==='chores'?choresView():tab==='projects'?projectsView():goalsView()}</div>
+  `;
+  app.querySelectorAll(".tab").forEach(b => b.onclick = () => { tab=b.dataset.tab; resetMenu=false; adding=false; editId=null; render(); });
+  wire();
+}
+
+function choresView() {
+  const chores = [...data.chores].sort((a,b)=>FREQ_ORDER[a.freq]-FREQ_ORDER[b.freq]);
+  const done = chores.filter(c=>c.done).length;
+  const pct = chores.length ? (done/chores.length)*100 : 0;
+  const usedFreqs = FREQS.filter(f => data.chores.some(c=>c.freq===f));
+  return `
+    <div class="progress-row">
+      <span class="muted">${done} of ${chores.length} done</span>
+      <div class="reset-wrap">
+        <button class="reset-btn" id="resetToggle">${I.reset} Reset</button>
+        ${resetMenu ? `<div class="reset-menu">
+          <button class="reset-item" data-reset="all">Reset everything</button>
+          ${usedFreqs.map(f=>`<button class="reset-item" data-reset="${f}">Reset ${f.toLowerCase()} only</button>`).join("")}
+        </div>` : ""}
+      </div>
+    </div>
+    <div class="track"><div class="fill" style="width:${pct}%"></div></div>
+    <div style="margin-top:16px">
+      ${chores.map(c=>`
+        <div class="chore-row">
+          <button class="check-btn" data-toggle="${c.id}">${c.done?I.check:I.circle}</button>
+          <div style="flex:1">
+            <div class="chore-name ${c.done?'done':''}">${esc(c.name)}</div>
+            <span class="freq-tag">${c.freq}</span>
+          </div>
+          <button class="icon-btn" data-del-chore="${c.id}">${I.trash}</button>
+        </div>`).join("")}
+    </div>
+    ${adding ? `
+      <div class="add-card">
+        <input id="cName" placeholder="Chore name" value="${esc(draft.name||'')}">
+        <select id="cFreq">${FREQS.map(f=>`<option ${draft.freq===f?'selected':''}>${f}</option>`).join("")}</select>
+        <div class="add-actions"><button class="btn-primary" id="cAdd">Add</button><button class="btn-ghost" id="cCancel">Cancel</button></div>
+      </div>` : `<button class="add-trigger" id="cShow">${I.plus} Add chore</button>`}
+  `;
+}
+
+function projectsView() {
+  return `
+    ${data.projects.map(p=>`
+      <div class="card">
+        <div class="card-head" data-open-proj="${p.id}">
+          ${p.open?I.down:I.right}
+          <span class="card-title">${esc(p.name)}</span>
+          <span class="status-pill" style="background:${STATUS_COLOR[p.status]||'#9ca3af'}">${p.status}</span>
+        </div>
+        ${p.open?`<div class="card-body">
+          ${editId===p.id?`
+            <input data-pf="name" data-id="${p.id}" placeholder="Project name" value="${esc(p.name)}">
+            <select data-pf="status" data-id="${p.id}">${STATUSES.map(s=>`<option ${p.status===s?'selected':''}>${s}</option>`).join("")}</select>
+            <textarea data-pf="nextStep" data-id="${p.id}" placeholder="Next step">${esc(p.nextStep)}</textarea>
+            <button class="btn-primary" data-done-edit="${p.id}">Done</button>
+          `:`
+            <div class="label">Next step</div>
+            <div class="body-text">${esc(p.nextStep)||"—"}</div>
+            <div class="card-actions">
+              <button class="btn-ghost" data-edit-proj="${p.id}">${I.pencil} Edit</button>
+              <button class="btn-danger" data-del-proj="${p.id}">${I.trashRed} Delete</button>
+            </div>
+          `}
+        </div>`:""}
+      </div>`).join("")}
+    ${adding?`
+      <div class="add-card">
+        <input id="pName" placeholder="Project name" value="${esc(draft.name||'')}">
+        <select id="pStatus">${STATUSES.map(s=>`<option ${draft.status===s?'selected':''}>${s}</option>`).join("")}</select>
+        <textarea id="pNext" placeholder="Next step">${esc(draft.nextStep||'')}</textarea>
+        <div class="add-actions"><button class="btn-primary" id="pAdd">Add</button><button class="btn-ghost" id="pCancel">Cancel</button></div>
+      </div>`:`<button class="add-trigger" id="pShow">${I.plus} Add project</button>`}
+  `;
+}
+
+function goalsView() {
+  return `
+    ${data.goals.map(g=>`
+      <div class="card">
+        <div class="card-head" data-open-goal="${g.id}">
+          ${g.open?I.down:I.right}
+          <span class="card-title">${esc(g.name)}</span>
+        </div>
+        ${g.open?`<div class="card-body">
+          ${editId===g.id?`
+            <input data-gf="name" data-id="${g.id}" placeholder="Goal" value="${esc(g.name)}">
+            <textarea data-gf="detail" data-id="${g.id}" placeholder="Notes / details">${esc(g.detail)}</textarea>
+            <button class="btn-primary" data-done-edit-goal="${g.id}">Done</button>
+          `:`
+            <div class="body-text">${esc(g.detail)||"—"}</div>
+            <div class="card-actions">
+              <button class="btn-ghost" data-edit-goal="${g.id}">${I.pencil} Edit</button>
+              <button class="btn-danger" data-del-goal="${g.id}">${I.trashRed} Delete</button>
+            </div>
+          `}
+        </div>`:""}
+      </div>`).join("")}
+    ${adding?`
+      <div class="add-card">
+        <input id="gName" placeholder="Goal" value="${esc(draft.name||'')}">
+        <textarea id="gDetail" placeholder="Notes / details">${esc(draft.detail||'')}</textarea>
+        <div class="add-actions"><button class="btn-primary" id="gAdd">Add</button><button class="btn-ghost" id="gCancel">Cancel</button></div>
+      </div>`:`<button class="add-trigger" id="gShow">${I.plus} Add goal</button>`}
+  `;
+}
+
+// ── Wiring ──────────────────────────────────────────────────
+function wire() {
+  const $ = s => document.querySelector(s);
+  const all = s => document.querySelectorAll(s);
+
+  // chores
+  const rt = $("#resetToggle"); if (rt) rt.onclick = e => { e.stopPropagation(); resetMenu=!resetMenu; render(); };
+  all("[data-reset]").forEach(b => b.onclick = () => {
+    const f = b.dataset.reset;
+    data.chores = data.chores.map(c => (f==="all"||c.freq===f)?{...c,done:false}:c);
+    resetMenu=false; save(); render();
+  });
+  all("[data-toggle]").forEach(b => b.onclick = () => {
+    const id=b.dataset.toggle; data.chores=data.chores.map(c=>c.id===id?{...c,done:!c.done}:c); save(); render();
+  });
+  all("[data-del-chore]").forEach(b => b.onclick = () => {
+    data.chores=data.chores.filter(c=>c.id!==b.dataset.delChore); save(); render();
+  });
+  const cShow=$("#cShow"); if(cShow) cShow.onclick=()=>{ adding=true; draft={name:"",freq:"Weekly"}; render(); $("#cName").focus(); };
+  const cAdd=$("#cAdd"); if(cAdd) cAdd.onclick=()=>{
+    const name=$("#cName").value.trim(); if(!name) return;
+    data.chores.push({id:uid(),name,freq:$("#cFreq").value,done:false}); adding=false; draft={}; save(); render();
+  };
+  const cCancel=$("#cCancel"); if(cCancel) cCancel.onclick=()=>{ adding=false; draft={}; render(); };
+  const cName=$("#cName"); if(cName){ cName.oninput=e=>draft.name=e.target.value; cName.onkeydown=e=>{if(e.key==='Enter')$("#cAdd").click();}; }
+  const cFreq=$("#cFreq"); if(cFreq) cFreq.onchange=e=>draft.freq=e.target.value;
+
+  // projects
+  all("[data-open-proj]").forEach(b=>b.onclick=()=>{ const id=b.dataset.openProj; data.projects=data.projects.map(p=>p.id===id?{...p,open:!p.open}:p); save(); render(); });
+  all("[data-edit-proj]").forEach(b=>b.onclick=()=>{ editId=b.dataset.editProj; render(); });
+  all("[data-done-edit]").forEach(b=>b.onclick=()=>{ editId=null; save(); render(); });
+  all("[data-del-proj]").forEach(b=>b.onclick=()=>{ data.projects=data.projects.filter(p=>p.id!==b.dataset.delProj); save(); render(); });
+  all("[data-pf]").forEach(el=>el.oninput=()=>{ const id=el.dataset.id,f=el.dataset.pf; data.projects=data.projects.map(p=>p.id===id?{...p,[f]:el.value}:p); save(); });
+  const pShow=$("#pShow"); if(pShow) pShow.onclick=()=>{ adding=true; draft={name:"",status:"Planning",nextStep:""}; render(); $("#pName").focus(); };
+  const pAdd=$("#pAdd"); if(pAdd) pAdd.onclick=()=>{ const name=$("#pName").value.trim(); if(!name) return; data.projects.push({id:uid(),name,status:$("#pStatus").value,nextStep:$("#pNext").value,open:true}); adding=false; draft={}; save(); render(); };
+  const pCancel=$("#pCancel"); if(pCancel) pCancel.onclick=()=>{ adding=false; draft={}; render(); };
+  ["pName","pStatus","pNext"].forEach(idn=>{ const el=$("#"+idn); if(el) el.oninput=()=>{ draft.name=$("#pName").value; draft.status=$("#pStatus").value; draft.nextStep=$("#pNext").value; }; });
+
+  // goals
+  all("[data-open-goal]").forEach(b=>b.onclick=()=>{ const id=b.dataset.openGoal; data.goals=data.goals.map(g=>g.id===id?{...g,open:!g.open}:g); save(); render(); });
+  all("[data-edit-goal]").forEach(b=>b.onclick=()=>{ editId=b.dataset.editGoal; render(); });
+  all("[data-done-edit-goal]").forEach(b=>b.onclick=()=>{ editId=null; save(); render(); });
+  all("[data-del-goal]").forEach(b=>b.onclick=()=>{ data.goals=data.goals.filter(g=>g.id!==b.dataset.delGoal); save(); render(); });
+  all("[data-gf]").forEach(el=>el.oninput=()=>{ const id=el.dataset.id,f=el.dataset.gf; data.goals=data.goals.map(g=>g.id===id?{...g,[f]:el.value}:g); save(); });
+  const gShow=$("#gShow"); if(gShow) gShow.onclick=()=>{ adding=true; draft={name:"",detail:""}; render(); $("#gName").focus(); };
+  const gAdd=$("#gAdd"); if(gAdd) gAdd.onclick=()=>{ const name=$("#gName").value.trim(); if(!name) return; data.goals.push({id:uid(),name,detail:$("#gDetail").value,open:true}); adding=false; draft={}; save(); render(); };
+  const gCancel=$("#gCancel"); if(gCancel) gCancel.onclick=()=>{ adding=false; draft={}; render(); };
+  ["gName","gDetail"].forEach(idn=>{ const el=$("#"+idn); if(el) el.oninput=()=>{ draft.name=$("#gName").value; draft.detail=$("#gDetail").value; }; });
+}
+
+// close reset menu on outside tap
+document.addEventListener("click", e => {
+  if (resetMenu && !e.target.closest(".reset-wrap")) { resetMenu=false; render(); }
+});
+
+load();
+render();
+</script>
+</body>
+</html>
